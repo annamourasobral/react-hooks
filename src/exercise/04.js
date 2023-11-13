@@ -5,7 +5,9 @@ import * as React from 'react'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const [squares, setSquares] = React.useState(Array(9).fill(null))
+  const [squares, setSquares] = React.useState(
+    JSON.parse(window.localStorage.getItem('squares')) ?? Array(9).fill(null),
+  )
   const nextValue = calculateNextValue(squares)
   const winner = calculateWinner(squares)
   const status = calculateStatus(winner, squares, nextValue)
@@ -22,7 +24,6 @@ function Board() {
     // given square index (like someone clicked a square that's already been
     // clicked), then return early so we don't make any state changes
     if (winner || squares[square]) return
-    //console.log('square value', square)
     // 🦉 It's typically a bad idea to mutate or directly change state in React.
     // Doing so can lead to subtle bugs that can easily slip into production.
     //
@@ -50,6 +51,14 @@ function Board() {
       </button>
     )
   }
+
+  const useLocalStorageState = (stateVariable, state) => {
+    React.useEffect(() => {
+      window.localStorage.setItem(stateVariable, JSON.stringify(state))
+    }, [state, stateVariable])
+  }
+
+  useLocalStorageState('squares', squares)
   return (
     <div>
       {/* 🐨 put the status in the div below */}
